@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treemap</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+<body>
+
+    <div>
+        <h1>Treemap da distribuição de Startups por segmento no Brasil</h1>
+        <h2>Fonte: <a href="https://pages.cortex-intelligence.com/hubfs/panorama-das-startups-2023.pdf?_gl=1*1nlz4lr*_ga*NTQwNzg1MDc4LjE3MDAxNDc2ODY.*_ga_N4D0JPY0EH*MTcwMDE0NzY4Ni4xLjAuMTcwMDE0NzY4OS42MC4wLjA.&_ga=2.85750237.595518162.1700147689-540785078.1700147686">Clique aqui</a></h2>
+    </div>
+
+    <script>
+        // Seus dados para o treemap (substitua isso pelos seus próprios dados)
+        var data = {
+            name: "root",
+            children: [
+                { name: "Tecnologia da Informação", value: 31.51},
+                { name: "Serviços", value: 25.99 },
+                { name: "Varejo", value: 15.17 },
+                { name: "Financeiro", value: 7.30 },
+                { name: "Indústria", value: 6.81 },
+                { name: "Educação", value: 3.92 },
+                { name: "Comunicação", value: 3.40 },
+                { name: "Construção", value: 1.72 },
+                { name: "Logística", value: 1.43 },
+                { name: "Saúde", value: 1.4 },
+                { name: "Alim.", value: 0.47 },
+                { name: "Entre.", value: 0.47 },
+                { name: "Agri.", value: 0.25 },
+                { name: "Hot.", value: 0.18 },
+
+
+            ]
+        };
+
+        // Configuração do treemap
+        var width = 1000;
+        var height = 600;
+
+        // Criar treemap
+        var treemap = d3.treemap()
+            .size([width, height])
+            .padding(1);
+
+        // Selecionar o contêiner onde o treemap será renderizado
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Converter dados para hierarquia
+        var root = d3.hierarchy(data)
+            .sum(function (d) { return d.value; });
+
+        // Gerar layout do treemap
+        treemap(root);
+
+        // Adicionar retângulos do treemap
+        svg.selectAll("rect")
+            .data(root.leaves())
+            .enter().append("rect")
+            .attr("x", function (d) { return d.x0; })
+            .attr("y", function (d) { return d.y0; })
+            .attr("width", function (d) { return d.x1 - d.x0; })
+            .attr("height", function (d) { return d.y1 - d.y0; })
+            .style("fill", "steelblue");
+
+        // Adicionar rótulos
+        svg.selectAll("text")
+            .data(root.leaves())
+            .enter().append("text")
+            .attr("x", function (d) { return d.x0 + 5; })
+            .attr("y", function (d) { return d.y0 + 15; })
+            .text(function (d) { return d.data.name; })
+            .attr("font-size", "12px")
+            .attr("fill", "white");
+    </script>
+
+</body>
+
+</html>
